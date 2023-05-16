@@ -1,15 +1,19 @@
 {
-  "name": "pp-web2-crud-web",
-  "version": "1.0.0",
-  "description": "Client Web para o CRUD",
-  "source": "src/index.html",
+  "name": "pp-web2-crud-client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "npx parcel",
-    "build": "npx parcel build"
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
   },
-  "author": "Leandro Heidemann",
-  "license": "ISC",
   "devDependencies": {
-    "parcel": "^0.3.0"
+    "sass": "^1.62.1",
+    "vite": "^4.3.2"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.7",
+    "bootstrap": "^5.2.3"
   }
 }
