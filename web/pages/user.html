@@ -1,77 +1,114 @@
-<table id="lista-usuarios" class="table">
+<ul class="nav  mb-3">
+  <li class="nav-item">
+    <button id="open-modal" type="button" class="btn btn-primary">
+      Novo Usuário
+    </button>
+  </li>
+</ul>
+
+<div id="alerts"></div>
+
+<table id="lista-usuarios" class="table table-bordered">
   <thead>
     <tr>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <th scope="col">Name</th>
+      <th scope="col">Username</th>
+      <th scope="col">Email</th>
+      <th scope="col" style="width: 110px;" rowspan="2" ></th>
+    </tr>
+    <tr>
+      <th>
+        <input
+          id="filter-name"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Filtrar por nome"
+        />
+      </th>
+      <th>
+        <input
+          id="filter-username"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Filtrar por username"
+        />
+      </th>
+      <th>
+        <input
+          id="filter-email"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Filtrar por email"
+        />
+      </th>
     </tr>
   </thead>
-  <tbody id="lista-usuarios-body">
+  <tbody>
     <tr>
-      <td class="text-center fw-bold" colspan="3">Nenhum Usuario encontrado</td>
+      <td class="text-center fw-bold" colspan="4">Nenhum Usuario encontrado</td>
     </tr>
   </tbody>
 </table>
 
-<!-- Button trigger modal -->
-<button
-  type="button"
-  class="btn btn-primary"
-  data-bs-toggle="modal"
-  data-bs-target="#exampleModal"
->
-  Launch demo modal
-</button>
-
-<!-- Modal -->
 <div
-  class="modal fade"
-  id="exampleModal"
+  id="modal-user"
+  class="modal fade modal-lg"
   tabindex="-1"
-  aria-labelledby="exampleModalLabel"
+  aria-labelledby="modal-user-label"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="modal-user-label">
+        </h1>
         <button
           type="button"
           class="btn-close"
           data-bs-dismiss="modal"
-          aria-label="Close"
+          aria-label="Fechar"
         ></button>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Email address</label
-            >
-            <input
-              type="email"
-              class="form-control"
-              id="exampleFormControlInput1"
-              placeholder="name@example.com"
-            />
+
+      <form id="form-user" >
+        <div class="modal-body">
+          <div class="row g-3">
+          <div class="col-md-4">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" required>
           </div>
-          <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label"
-              >Example textarea</label
-            >
-            <textarea
-              class="form-control"
-              id="exampleFormControlTextarea1"
-              rows="3"
-            ></textarea>
+          <div class="col-md-4">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group">
+              <span class="input-group-text" id="usernamePrepend">@</span>
+              <input type="text" class="form-control" id="username" aria-describedby="usernamePrepend" required>
+            </div>
           </div>
-        </form>
+          <div class="col-md-4">
+            <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" required email >
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          Fechar
         </button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button id="submit-button" class="btn btn-primary" type="submit"></button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div id="modal-delete" class="modal modal-sm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"></div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button id="btn-delete" type="button" class="btn btn-danger">Delete</button>
+        <button id="btn-cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

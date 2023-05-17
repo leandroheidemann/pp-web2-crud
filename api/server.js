@@ -35,6 +35,10 @@ app.get('/users', (req, res) => {
             userFindAllQuery += ' AND LOWER(name) LIKE LOWER(\'%' + req.query.name + '%\')';
         }
 
+        if (!!req.query.username) {
+            userFindAllQuery += ' AND LOWER(username) LIKE LOWER(\'%' + req.query.username + '%\')';
+        }
+
         if (!!req.query.email) {
             userFindAllQuery += ' AND LOWER(email) LIKE LOWER(\'%' + req.query.email + '%\')';
         }
@@ -62,7 +66,7 @@ app.get('/users/:id', (req, res) => {
         const user = results.rows[0];
 
         if (!user) {
-            res.status(404).send('Usuário não encontrado!');
+            res.status(404).json({ message: 'Usuário não encontrado!' });
         }
 
         res.status(200).json(omit(user, 'password'));
@@ -72,12 +76,12 @@ app.get('/users/:id', (req, res) => {
 app.post('/users', (req, res) => {
     const { name, email, username } = req.body;
 
-    pool.query('INSERT INTO users (id, name, email, username) VALUES ($1, $2, $3, $4)', [uuid() ,name, email, username], (error, results) => {
+    pool.query('INSERT INTO users (id, name, email, username) VALUES ($1, $2, $3, $4) RETURNING *', [uuid(), name, email, username], (error, results) => {
         if (error) {
             throw error;
         }
 
-        res.status(201).send('Usuário adicionado com sucesso!');
+        res.status(201).json(results.rows[0]);
     });
 });
 
@@ -89,17 +93,108 @@ app.put('/users/:id', (req, res) => {
             throw error;
         }
 
-        res.status(200).send('Usuário alterado com sucesso!');
+        res.status(200).json({ message: 'Usuário alterado com sucesso!' });
     });
 });
 
 app.delete('/users/:id', (req, res) => {
     pool.query('DELETE FROM users WHERE id = $1', [req.params.id], (error, results) => {
         if (error) {
+            res.status(500).json({ message: 'Erro ao remover usuário!', error: error });
+            return;
+        }
+
+        res.status(200).json({ message: 'Usuário removido com sucesso!' });
+    });
+});
+
+app.get('/cars', (req, res) => {
+    var carFindAllQuery = 'SELECT c.id, c.model, c.color, c.year, u.name as "owner" FROM cars c INNER JOIN users u ON c.user_id = u.id ';
+
+    if (req.query) {
+        carFindAllQuery += ' WHERE 1 = 1';
+
+        if (!!req.query.id) {
+            carFindAllQuery += ' AND c.id = ' + req.query.id;
+        }
+
+        if (!!req.query.brand) {
+            carFindAllQuery += ' AND LOWER(c.brand) LIKE LOWER(\'%' + req.query.brand + '%\')';
+        }
+
+        if (!!req.query.model) {
+            carFindAllQuery += ' AND LOWER(c.model) LIKE LOWER(\'%' + req.query.model + '%\')';
+        }
+
+        if (!!req.query.year) {
+            carFindAllQuery += ' AND c.year = ' + req.query.year;
+        }
+
+        if (!!req.query.ownerName) {
+            carFindAllQuery += ' AND LOWER(u.name) LIKE LOWER(\'%' + req.query.ownerName + '%\')';
+        }
+    }
+
+    carFindAllQuery += ' ORDER BY c.id ASC';
+
+    pool.query(carFindAllQuery, (error, results) => {
+        if (error) {
             throw error;
         }
 
-        res.status(200).send('Usuário removido com sucesso!');
+        const cars = results.rows;
+
+        res.status(200).json(cars);
+    });
+});
+
+app.get('/cars/:id', (req, res) => {
+    pool.query('SELECT * FROM cars WHERE id = $1', [req.params.id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        const car = results.rows[0];
+
+        if (!car) {
+            res.status(404).json({ message: 'Carro não encontrado!' });
+        }
+
+        res.status(200).json(car);
+    });
+});
+
+app.post('/cars', (req, res) => {
+    const { model, color, year, user_id } = req.body;
+
+    pool.query('INSERT INTO cars (id, model, color, year, user_id) VALUES ($1, $2, $3, $4, $5)', [uuid(), model, color, year, user_id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        res.status(201).json({ message: 'Carro adicionado com sucesso!' });
+    });
+});
+
+app.put('/cars/:id', (req, res) => {
+    const { model, color, year, user_id } = req.body;
+
+    pool.query('UPDATE cars SET model = $1, color = $2, year = $3, user_id = $4 WHERE id = $5', [model, color, year, user_id, req.params.id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        res.status(200).json({ message: 'Carro alterado com sucesso!' });
+    });
+});
+
+app.delete('/cars/:id', (req, res) => {
+    pool.query('DELETE FROM cars WHERE id = $1', [req.params.id], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Erro ao remover carro!', error: error });
+        }
+
+        res.status(200).json({ message: 'Carro removido com sucesso!' });
     });
 });
 

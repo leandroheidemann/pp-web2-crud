@@ -9,18 +9,10 @@ const routes = {
 function renderPage() {
   const path = window.location.pathname;
   const pageContent = routes[path] || notFoundPage;
-
   pageContent();
-
-  document.getElementById('app').innerHTML = '';
 }
 
 window.addEventListener('popstate', renderPage);
-
-function navigateTo(path) {
-  window.history.pushState({}, '', path);
-  renderPage();
-}
 
 function homePage() {
   loadContent('home');
@@ -38,21 +30,20 @@ function notFoundPage() {
   loadContent('404');
 }
 
+
 function loadContent(route) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', `/pages/${route}.html`, true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
+  fetch(`/pages/${route}.html`)
+    .then(response => response.text())
+    .then(html => {
       const content = document.getElementById('app');
-      content.innerHTML = xhr.responseText;
+      content.innerHTML = html;
 
       var script = document.createElement('script');
+      script.type = 'module';
       script.src = `js/${route}.js`;
 
       document.body.appendChild(script);
-    }
-  };
-  xhr.send();
+    });
 }
 
 // Inicializar o roteador
